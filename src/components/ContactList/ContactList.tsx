@@ -1,16 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { useGetContactsQuery, useRemoveContactMutation } from '../../redux/contactsSlice';
-import { getFilter } from '../../redux/filterSlice';
+import { useGetContactsQuery, useRemoveContactMutation } from 'store/contactsSlice';
+import { getFilter } from 'store/filterSlice';
 
-import { List, ListItem } from './ContactsList.styled';
+import { ButtonsWrapper, List, ListItem } from './ContactsList.styled';
+import ContactEditModal from '../ContactEditModal';
 
 const ContactList = () => {
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [currentContact, setCurrentContact] = useState<Contact>();
+
   const { data: contacts } = useGetContactsQuery(undefined);
   const [removeContact, { isLoading: isDeleting }] = useRemoveContactMutation();
   const [removedContactId, setRemovedContactId] = useState('');
   const filter = useSelector(getFilter);
+
+  const editContactHandler = (contact: Contact) => {
+    setIsOpenModal(true);
+    setCurrentContact(contact);
+  };
 
   const onContactDelete = async (contactId: string) => {
     removeContact(contactId);
@@ -31,18 +40,38 @@ const ContactList = () => {
   }, [removedContactId, isDeleting]);
 
   return (
-    <List>
-      {filteredContacts.map((contact, index) => (
-        <ListItem key={contact.id}>
-          <span>{index + 1}</span>
-          {contact.name}, {contact.number}
-          <button type="button" onClick={() => onContactDelete(contact.id)} disabled={isDeleting}>
-            {contact.id === removedContactId ? 'deleting..' : 'delete'}
-          </button>
-        </ListItem>
-      ))}
-    </List>
+    <>
+      <List>
+        {filteredContacts.map((contact, index) => (
+          <ListItem key={contact.id}>
+            <span>{index + 1}</span>
+            {contact.name}, {contact.number}
+            <ButtonsWrapper>
+              <button onClick={() => editContactHandler(contact)}>edit</button>
+              <button
+                type="button"
+                onClick={() => onContactDelete(contact.id)}
+                disabled={isDeleting}
+              >
+                {contact.id === removedContactId ? 'deleting...' : 'delete'}
+              </button>
+            </ButtonsWrapper>
+          </ListItem>
+        ))}
+      </List>
+      <ContactEditModal
+        contact={currentContact}
+        onClose={() => setIsOpenModal(false)}
+        open={isOpenModal}
+      />
+    </>
   );
 };
 
 export default ContactList;
+
+type Contact = {
+  id: string;
+  name: string;
+  number: string;
+};

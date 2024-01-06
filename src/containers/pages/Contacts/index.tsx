@@ -1,14 +1,11 @@
-import React from 'react';
-
 import ContactForm from 'components/ContactForm';
 import ContactList from 'components/ContactList';
 import Filter from 'components/Filter';
 
-import { Wrapper } from './App.styled';
+import { Wrapper } from './styled';
 
-const App = () => (
+const Contacts = () => (
   <Wrapper>
-    <h1>Phonebook</h1>
     <ContactForm />
 
     <h2>Contacts</h2>
@@ -17,4 +14,4 @@ const App = () => (
   </Wrapper>
 );
 
-export default App;
+export default Contacts;

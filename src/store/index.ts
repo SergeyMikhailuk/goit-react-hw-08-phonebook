@@ -4,15 +4,19 @@ import storage from 'redux-persist/lib/storage';
 
 import { contactsApi } from './contactsSlice';
 import { filterSlice } from './filterSlice';
+import { authSlice } from './auth/auth-slice';
+import { authApi } from './auth/auth-operations';
 
 const persistConfig = {
   key: 'contacts',
   storage,
-  whiteList: ['contacts'],
-  blacklist: ['filter'],
+  whiteList: ['user'],
+  blacklist: ['filter', 'authApi', 'contacts'],
 };
 
 const rootReducer = combineReducers({
+  user: authSlice.reducer,
+  [authApi.reducerPath]: authApi.reducer,
   [contactsApi.reducerPath]: contactsApi.reducer,
   filter: filterSlice.reducer,
 });
@@ -24,7 +28,7 @@ export const store = configureStore({
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: false,
-    }).concat(contactsApi.middleware),
+    }).concat(contactsApi.middleware, authApi.middleware),
 });
 
 export const persistor = persistStore(store);

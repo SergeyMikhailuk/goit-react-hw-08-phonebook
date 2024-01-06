@@ -4,8 +4,8 @@ import { nanoid } from 'nanoid';
 import Notiflix from 'notiflix';
 import * as yup from 'yup';
 
+import { useAddContactMutation, useGetContactsQuery } from 'store/contactsSlice';
 import { Form } from './ContactsForm.styled';
-import { useAddContactMutation, useGetContactsQuery } from '../../redux/contactsSlice';
 
 const validationSchema = yup.object({
   name: yup.string().required('Name is required'),
