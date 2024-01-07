@@ -8,23 +8,20 @@ import { authSlice } from './auth/auth-slice';
 import { authApi } from './auth/auth-operations';
 
 const persistConfig = {
-  key: 'contacts',
+  key: 'user',
   storage,
-  whiteList: ['user'],
-  blacklist: ['filter', 'authApi', 'contacts'],
+  blacklist: ['email'],
 };
 
 const rootReducer = combineReducers({
-  user: authSlice.reducer,
+  user: persistReducer(persistConfig, authSlice.reducer),
   [authApi.reducerPath]: authApi.reducer,
   [contactsApi.reducerPath]: contactsApi.reducer,
   filter: filterSlice.reducer,
 });
 
-const persistReducerContacts = persistReducer(persistConfig, rootReducer);
-
 export const store = configureStore({
-  reducer: persistReducerContacts,
+  reducer: rootReducer,
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: false,
